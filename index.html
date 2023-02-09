@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    <link rel="manifest" href="soberapp.webmanifest" />
+    <title>SoberApp</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Main Menu</h1>
+      <div>
+        <button v-on:click="currentPage = 'AddDrink'">Add a Drink</button>
+        <button v-on:click="currentPage = 'BACCalculator'">
+          Calculate BAC
+        </button>
+        <button v-on:click="currentPage = 'SpinTheBottle'">
+          Spin the Bottle
+        </button>
+        <button v-on:click="currentPage = 'NeverHaveIEver'">
+          Never Have I Ever
+        </button>
+      </div>
+      <div v-if="currentPage === 'AddDrink'">
+        <h2>Choose a drink:</h2>
+        <select v-model="selectedDrink">
+          <option v-for="drink in drinks" :key="drink.name" :value="drink">
+            {{ drink.name }}
+          </option>
+        </select>
+        <br />
+        <button @click.prevent="addDrink">Add Drink</button>
+        <br />
+        <br />
+        <h2>Selected Drinks:</h2>
+        <ul>
+          <li v-for="drink in selectedDrinks" :key="drink.name">
+            {{ drink.name }} - {{ drink.alcoholContent }}%
+          </li>
+        </ul>
+      </div>
+      <div v-if="currentPage === 'BACCalculator'">
+        <h2>BAC Calculator:</h2>
+        <form>
+          <label>Weight (in kg):</label>
+          <input type="number" v-model="weight" />
+          <br />
+          <label>Hours Passed:</label>
+          <input type="number" v-model="hoursPassed" />
+          <br />
+          <label>Gender:</label>
+          <select v-model="gender">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+          <br />
+          <button @click.prevent="calculateBAC">Calculate BAC</button>
+        </form>
+        <p v-if="bac">Your BAC is: {{ bac }}</p>
+      </div>
+      <div v-if="currentPage === 'SpinTheBottle'">
+        <h2>Spin the Bottle:</h2>
+        <button @click="spinTheBottle">Spin the bottle</button>
+        <p>The bottle landed on: {{ selectedPlayer }}</p>
+      </div>
+      <div v-if="currentPage === 'NeverHaveIEver'">
+        <h2>Never Have I Ever:</h2>
+        <form>
+          <button @click.prevent="playGame">Play</button>
+          <p>{{ selectedStatement }}</p>
+        </form>
+        <br />
+        <br />
+        <h2>Statements:</h2>
+        <ul>
+          <li v-for="statement in statements" :key="statement">
+            {{ statement }}
+          </li>
+        </ul>
+      </div>
+    </div>
+    <script>
+      new Vue({
+        el: "#app",
+        data: {
+          currentPage: "",
+          selectedDrink: "",
+          selectedDrinks: [],
+          weight: "",
+          hoursPassed: "",
+          gender: "",
+          bac: "",
+          selectedPerson: "",
+          statement: "",
+          statements: [],
+          drinks: [
+            { name: "Beer", alcoholContent: 5 },
+            { name: "Wine", alcoholContent: 12 },
+            { name: "Spirits", alcoholContent: 40 },
+          ],
+          players: ["player1", "player2", "player3", "player4"],
+          selectedPlayer: "",
+          statements: [
+            "Never have I ever ridden on a rollercoaster",
+            "Never have I ever been skydiving",
+            "Never have I ever been to Europe",
+            "Never have I ever eaten sushi",
+          ],
+          selectedStatement: "",
+        },
+        created: function () {
+          if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("service-worker.js");
+          }
+        },
+        methods: {
+          addDrink: function () {
+            this.selectedDrinks.push(this.selectedDrink);
+            this.selectedDrink = "";
+          },
+          calculateBAC: function () {
+            const bacFormula =
+              ((this.selectedDrinks.reduce(
+                (total, drink) => total + drink.alcoholContent,
+                0
+              ) *
+                5.14) /
+                this.weight) *
+                0.73 -
+              0.15 * this.hoursPassed;
+            this.bac = bacFormula.toFixed(2);
+          },
+          spinTheBottle() {
+            var randomIndex = Math.floor(Math.random() * this.players.length);
+            this.selectedPlayer = this.players[randomIndex];
+          },
+          playGame() {
+            var randomIndex = Math.floor(
+              Math.random() * this.statements.length
+            );
+            this.selectedStatement = this.statements[randomIndex];
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

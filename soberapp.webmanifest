@@ -1,0 +1,20 @@
+{
+    "name": "SoberApp PWA",
+    "short_name": "ASC",
+    "description": "My first PWA",
+    "icons": [
+        {
+            "src": "images/logo-smaller.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
+        {
+            "src": "images/logo-bigger.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "start_url": "index.html",
+    "display": "fullscreen",
+    "background-color": "#260bca"
+}
